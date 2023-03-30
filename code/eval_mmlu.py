@@ -191,8 +191,9 @@ if __name__ == "__main__":
     parser.add_argument("--engine", "-e", # choices=["davinci", "curie", "babbage", "ada"],
                         default=[
                                 # 'ada', 'babbage', 'curie', 'text-ada-001', 'text-babbage-001', 'text-curie-001',
-                                # 'davinci', 'code-davinci-002', 'text-davinci-002', 'text-davinci-003', 
-                                'gpt-3.5-turbo-0301', 'gpt-3.5-turbo'
+                                'code-davinci-002', 'text-davinci-002'
+                                # 'davinci', 'text-davinci-003', 
+                                # 'gpt-3.5-turbo-0301', 'gpt-3.5-turbo'
                             ], nargs="+")
     args = parser.parse_args()
     main(args)
