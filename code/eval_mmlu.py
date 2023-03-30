@@ -64,30 +64,51 @@ def eval(args, subject, engine, dev_df, test_df):
             prompt = train_prompt + prompt_end
 
         label = test_df.iloc[i, test_df.shape[1]-1]
-        
+
         while True:
             try:
-                c = openai.Completion.create(
-                    model=engine,
-                    prompt=prompt,
-                    max_tokens=1,
-                    logprobs=100,
-                    temperature=0,
-                    echo=True
-                )
+                # Handle chat models
+                if 'turbo' in engine:
+                    c = openai.ChatCompletion.create(
+                        model=engine,
+                        messages=[{
+                            'role': 'user',
+                            'content': prompt
+                        }],
+                        max_tokens=1,
+                        temperature=0,
+                    )
+                else:
+                    c = openai.Completion.create(
+                        model=engine,
+                        prompt=prompt,
+                        max_tokens=1,
+                        logprobs=100,
+                        temperature=0,
+                        echo=True
+                    )
                 break
             except:
                 print("pausing")
                 time.sleep(1)
                 continue
 
-        lprobs = []
-        for ans in answers:
-            try:
-                lprobs.append(c["choices"][0]["logprobs"]["top_logprobs"][-1][" {}".format(ans)])
-            except:
-                print("Warning: {} not found. Artificially adding log prob of -100.".format(ans))
-                lprobs.append(-100)
+        if 'turbo' in engine:
+            lprobs = []
+            for ans in answers:
+                if ans == c['choices'][0]['message']['content']:
+                    lprobs.append(100)
+                else:
+                    lprobs.append(-100)
+        else:
+            lprobs = []
+            for ans in answers:
+                try:
+                    lprobs.append(c["choices"][0]["logprobs"]["top_logprobs"][-1][" {}".format(ans)])
+                except:
+                    print("Warning: {} not found. Artificially adding log prob of -100.".format(ans))
+                    lprobs.append(-100)
+
         pred = {0: "A", 1: "B", 2: "C", 3: "D"}[np.argmax(lprobs)]
         probs = softmax(np.array(lprobs))
 
@@ -169,7 +190,7 @@ if __name__ == "__main__":
     parser.add_argument("--save_dir", "-s", type=str, default="../results/outputs/mmlu")
     parser.add_argument("--engine", "-e", # choices=["davinci", "curie", "babbage", "ada"],
                         default=[
-                                'ada', 'babbage', 'curie', 'text-ada-001', 'text-babbage-001', 'text-curie-001',
+                                # 'ada', 'babbage', 'curie', 'text-ada-001', 'text-babbage-001', 'text-curie-001',
                                 # 'davinci', 'code-davinci-002', 'text-davinci-002', 'text-davinci-003', 
                                 'gpt-3.5-turbo-0301', 'gpt-3.5-turbo'
                             ], nargs="+")
