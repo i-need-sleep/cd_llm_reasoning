@@ -62,6 +62,7 @@ def eval(args, subject, engine, dev_df, test_df):
             k -= 1
             train_prompt = gen_prompt(dev_df, subject, k)
             prompt = train_prompt + prompt_end
+        print(prompt)
 
         label = test_df.iloc[i, test_df.shape[1]-1]
         while True:
@@ -104,7 +105,7 @@ def eval(args, subject, engine, dev_df, test_df):
 
 def main(args):
     engines = args.engine
-    subjects = sorted([f.split("_test.csv")[0] for f in os.listdir(os.path.join(args.data_dir, "test")) if "_test.csv" in f])
+    subjects = [f for f in os.listdir(args.data_dir) if '.' not in f]
 
     if not os.path.exists(args.save_dir):
         os.mkdir(args.save_dir)
@@ -115,7 +116,7 @@ def main(args):
     print(subjects)
     print(args)
 
-    out_path = f'{globals.OUTPUT_DIR}/mmlu/aggreagated_{args.ntrain}shot.json'
+    out_path = f'{globals.OUTPUT_DIR}/reasoning/aggreagated_{args.ntrain}shot.json'
     out = {} # {enging: {subject: acc, ...}, ...}
     if os.path.exists(out_path):
         print(f'Loading from {out_path}')
