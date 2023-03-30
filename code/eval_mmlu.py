@@ -66,33 +66,33 @@ def eval(args, subject, engine, dev_df, test_df):
         label = test_df.iloc[i, test_df.shape[1]-1]
 
         while True:
-            try:
-                # Handle chat models
-                if 'turbo' in engine:
-                    c = openai.ChatCompletion.create(
-                        model=engine,
-                        messages=[{
-                            'role': 'user',
-                            'content': prompt
-                        }],
-                        max_tokens=1,
-                        temperature=0,
-                    )
-                else:
-                    c = openai.Completion.create(
-                        model=engine,
-                        prompt=prompt,
-                        max_tokens=1,
-                        logprobs=100,
-                        temperature=0,
-                        echo=True
-                    )
-                break
-            except:
-                print("pausing")
-                time.sleep(1)
-                continue
-
+            # try:
+            # Handle chat models
+            if 'turbo' in engine:
+                c = openai.ChatCompletion.create(
+                    model=engine,
+                    messages=[{
+                        'role': 'user',
+                        'content': prompt
+                    }],
+                    max_tokens=1,
+                    temperature=0,
+                )
+            else:
+                c = openai.Completion.create(
+                    model=engine,
+                    prompt=prompt,
+                    max_tokens=1,
+                    logprobs=100,
+                    temperature=0,
+                    echo=True
+                )
+            break
+            # except:
+            #     print("pausing")
+            #     time.sleep(1)
+            #     continue
+        print(123123)
         if 'turbo' in engine:
             lprobs = []
             for ans in answers:
@@ -191,8 +191,8 @@ if __name__ == "__main__":
     parser.add_argument("--engine", "-e", # choices=["davinci", "curie", "babbage", "ada"],
                         default=[
                                 # 'ada', 'babbage', 'curie', 'text-ada-001', 'text-babbage-001', 'text-curie-001',
-                                'code-davinci-002', 'text-davinci-002'
-                                # 'davinci', 'text-davinci-003', 
+                                # 'code-davinci-002', the codex models are deprecated
+                                # 'text-davinci-003', 'text-davinci-002'
                                 # 'gpt-3.5-turbo-0301', 'gpt-3.5-turbo'
                             ], nargs="+")
     args = parser.parse_args()
