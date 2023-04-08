@@ -1,0 +1,1 @@
+docker run -dit -v "C:\Users\Willi\Desktop\cd_llm_reasoning":/project 108eea8f1a6c
