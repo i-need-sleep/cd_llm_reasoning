@@ -6,7 +6,8 @@
 code/utils/keychain.py
 
 # Data
-data
+data/mmlu
+data/reasoning
 
 *.mid
 
